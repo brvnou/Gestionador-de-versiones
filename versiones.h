@@ -3,21 +3,21 @@
 #include "archivo.h"
 #include "version.h"
 
-struct nodo_version{
+struct nodoDeLaVersion{
     version* version;	
-	nodo_version* primer_hijo;
-	nodo_version* sig_hermano;
+	nodoDeLaVersion* primer_hijo;
+	nodoDeLaVersion* sig_hermano;
 };
-typedef struct nodo_version * NVersion;
+typedef struct nodoDeLaVersion* NVersion;
+typedef struct nodo_archivo * Archivo;
 
-bool esFormatoValido(char* version);
-nodo_version* buscarVersion(nodo_version* raiz, char* version_buscada);
+nodoDeLaVersion* buscarVersion(nodoDeLaVersion* raiz, char* version_buscada);
 char* obtenerPadre(char* version);
+void mostrarArbolRecursivo(NVersion &v, int nivel);
 bool existePadreDirecto(Archivo a, char* version);
+bool esFormatoValido(char* version);
 TipoRet CrearVersion(Archivo &a, char * version, char * error);
-void mostrarArbolRecursivo(NVersion &v, int nivel);
 TipoRet MostrarVersiones(Archivo a);
-void mostrarArbolRecursivo(NVersion &v, int nivel);
 TipoRet BorrarVersion(Archivo &a, char * version);
 
 

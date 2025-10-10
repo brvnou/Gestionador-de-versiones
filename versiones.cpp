@@ -35,7 +35,7 @@ bool esFormatoValido(char* version){
 	}
 }
 
-nodo_version* buscarVersion(nodo_version* raiz, char* version_buscada) {
+nodoDeLaVersion* buscarVersion(nodoDeLaVersion* raiz, char* version_buscada) {
 	if (raiz == NULL) {
 		return NULL;  // Árbol vacío
     }else if(raiz->version->id = version_buscada){
@@ -44,7 +44,7 @@ nodo_version* buscarVersion(nodo_version* raiz, char* version_buscada) {
 	}
     
     // Busca PRIMERO en los HIJOS de este nodo (profundidad)
-    nodo_version* encontrado = buscarVersion(raiz->primer_hijo, version_buscada);
+    nodoDeLaVersion* encontrado = buscarVersion(raiz->primer_hijo, version_buscada);
     if (encontrado != NULL) {
 		return encontrado;  // Encontrado en los hijos
     }else{
@@ -118,7 +118,7 @@ TipoRet CrearVersion(Archivo &a, char * version, char * error){
         return ERROR;
     }else{
 		// Crear el nodo primero (siempre lo necesitamos)
-		nodo_version* nuevaVer = new nodo_version;
+		nodoDeLaVersion* nuevaVer = new nodoDeLaVersion;
 		nuevaVer->version->id = new char[strlen(version) + 1];
 		nuevaVer->primer_hijo = NULL;
 		nuevaVer->sig_hermano = NULL;
@@ -128,7 +128,7 @@ TipoRet CrearVersion(Archivo &a, char * version, char * error){
 		
 		if (padre != NULL) {
 			// Tiene padre - buscar e insertar como hijo
-			nodo_version* nodo_padre = buscarVersion(a->raiz, padre);        
+			nodoDeLaVersion* nodo_padre = buscarVersion(a->raiz, padre);        
 			nuevaVer->sig_hermano = nodo_padre->primer_hijo;
 			nodo_padre->primer_hijo = nuevaVer;
 			delete[] padre;

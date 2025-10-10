@@ -1,6 +1,7 @@
 #ifndef ARCHIVO_H
 #define ARCHIVO_H
 #include "definiciones.h"
+#include "versiones.h"
 
 // Estructuras de Datos y Algoritmos - Obligatorio 2025
 // Tecnologo en Informatica FIng - DGETP - UTEC
@@ -10,7 +11,7 @@
 
 struct nodo_archivo {
     char * nombre;
-    nodo_version* raiz; 
+    nodoDeLaVersion* raiz; 
 };
 
 

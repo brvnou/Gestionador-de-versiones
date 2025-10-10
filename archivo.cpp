@@ -2,12 +2,9 @@
 #include "archivo.h"
 #include <string.h>
 #include <iostream>
-#include <cctype> //para isDigit
 
 using namespace std;
 
-struct nodo_version;
-struct nodo_archivo;
 
 
 Archivo CrearArchivo(char * nombre){
@@ -15,9 +12,9 @@ Archivo CrearArchivo(char * nombre){
 	a->nombre = new(char[MAX_NOMBRE]);
 	strcpy(a->nombre, nombre);
 
-	a->raiz = new nodo_version;
-	a->raiz->version = new char[2];
-	strcpy(a->raiz->version, "1");
+	a->raiz = new nodoDeLaVersion;
+	a->raiz->version = new version;
+	a->raiz->version->id = strdup("1");
 	a->raiz->primer_hijo = NULL;
 	a->raiz->sig_hermano = NULL;
 	
@@ -29,8 +26,6 @@ TipoRet BorrarArchivo(Archivo &a){
 	cout << "ARCHIVO BORRADO" << endl;
 	return NO_IMPLEMENTADA;
 }
-
-
 
 TipoRet InsertarLinea(Archivo &a, char * version, char * linea, unsigned int nroLinea, char * error){
 	// Esta función inserta una linea de texto a la version parámetro en la posición nroLinea.
