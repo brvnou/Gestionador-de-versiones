@@ -100,7 +100,7 @@ TipoRet MostrarCambios(Archivo a, char * version){
         cout << "Parametros invalidos" << endl;
         return ERROR;
     }else{
-        return buscarVersionMostrarCambios(a->nodo, version, a->nombre);
+        return cantidadLineas(a->nodo, version, a->nombre);
     }
 }
 
@@ -110,10 +110,17 @@ TipoRet BorrarVersion(Archivo &a, char * version){
     return NO_IMPLEMENTADA;
 }
 
-TipoRet Iguales(Archivo a, char * version1, char * version2, bool &iguales){
-    return NO_IMPLEMENTADA;
-}
 
+TipoRet Iguales(Archivo a, char *version1, char *version2, bool &iguales){
+    // Solo chequeamos que las cadenas de versiones no sean NULL
+    if (strcmp(version1, "") == 0 || strcmp(version2, "") == 0){
+        cout << "Parametros invalidos" << endl;
+        iguales = false;
+        return ERROR;
+    }else{
+        return versionesIguales(a->nodo, version1, version2, iguales);
+    }
+}
 TipoRet VersionIndependiente(Archivo &a, char * version){
     return NO_IMPLEMENTADA;
 }

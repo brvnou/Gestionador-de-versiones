@@ -365,3 +365,34 @@ TipoRet buscarVersionMostrarCambios(Version nodo, char* version, char* nombreArc
 	}
 }
 
+
+// Comprueba si la versión es NULL o su lista de líneas está vacía
+bool esVersionVacia(Version v){
+	return (v == NULL || v->version == NULL || v->version->linea == NULL);
+}
+
+
+// Función que compara dos versiones completas
+TipoRet versionesIguales(Version nodoinicio, char *version1, char *version2, bool &iguales){
+	// Busco las versiones en el árbol
+	Version v1 = buscarVersion(nodoinicio, version1);
+	Version v2 = buscarVersion(nodoinicio, version2);
+
+	// Pregunto si están vacías usando función tercerizada
+	if (v1 == NULL || v2 == NULL){
+		cout << "Una o ambas versiones no existen" << endl;
+		iguales = false;
+		return ERROR;
+	}else{
+		// Chequeo si tienen el mismo número de líneas
+		if (!cantidadLineas(v1->version->linea, v2->version->linea)){
+			iguales = false;
+			cout << "Las versiones son diferentes" << endl; //*******no imprime esto */
+			return ERROR;
+		}else{
+			// Comparo línea por línea
+			iguales = compararLineas(v1->version->linea, v2->version->linea);
+			return OK;
+		}
+	}
+}

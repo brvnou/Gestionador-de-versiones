@@ -205,3 +205,38 @@ Linea crearLineaVacia(Linea lineas){
     return lineas;
 }
 
+
+
+// Cuenta líneas de una versión
+int contarLineas(Linea l){
+    int total = 0;
+    while (l != NULL){
+        total++;
+        l = l->sig_linea;
+    }
+    return total;
+}
+
+// Verifica si dos versiones tienen el mismo número de líneas
+bool versionesTienenMismoNumeroDeLineas(Linea lineas1, Linea lineas2){
+    int total1 = contarLineas(lineas1);
+    int total2 = contarLineas(lineas2);
+    return (total1 == total2);
+}
+
+// Compara dos listas de líneas
+bool compararLineas(Linea l1, Linea l2){
+    while (l1 != NULL && l2 != NULL){
+        // puede que sea ==0 y que retorne a true
+        if (strcmp(l1->texto, l2->texto) != 0){
+            return false; // línea distinta
+        }else{
+            l1 = l1->sig_linea;
+            l2 = l2->sig_linea;
+        }
+    }
+    // Si ambas terminaron al mismo tiempo, son iguales
+    return (l1 == NULL && l2 == NULL);
+}
+
+
