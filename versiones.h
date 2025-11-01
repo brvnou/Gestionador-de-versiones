@@ -61,5 +61,11 @@ TipoRet versionesInsertarLinea(Version raiz, char *versionId, char *linea, unsig
 bool esVersionVacia(Version v);
 TipoRet versionesIguales(Version nodoinicio, char *version1, char *version2, bool &iguales);
     
-    
+TipoRet buscarVersionIndependiente(Version nodoinicio, char *version);
+
+Linea obtenerLineasAcumuladas(Version nodo);
+
+
+Linea copiarLineas(Linea original);
+
 #endif

@@ -378,21 +378,96 @@ TipoRet versionesIguales(Version nodoinicio, char *version1, char *version2, boo
 	Version v1 = buscarVersion(nodoinicio, version1);
 	Version v2 = buscarVersion(nodoinicio, version2);
 
-	// Pregunto si están vacías usando función tercerizada
-	if (v1 == NULL || v2 == NULL){
-		cout << "Una o ambas versiones no existen" << endl;
+	// Chequeo si tienen el mismo número de líneas
+	if (!cantidadLineas(v1->version->linea, v2->version->linea)){
 		iguales = false;
+		cout << "Las versiones son diferentes" << endl; //*******no imprime esto */
 		return ERROR;
 	}else{
-		// Chequeo si tienen el mismo número de líneas
-		if (!cantidadLineas(v1->version->linea, v2->version->linea)){
-			iguales = false;
-			cout << "Las versiones son diferentes" << endl; //*******no imprime esto */
-			return ERROR;
-		}else{
-			// Comparo línea por línea
-			iguales = compararLineas(v1->version->linea, v2->version->linea);
-			return OK;
-		}
+		// Comparo línea por línea
+		iguales = compararLineas(v1->version->linea, v2->version->linea);
+		return OK;
 	}
+}
+
+
+TipoRet buscarVersionIndependiente(Version nodoinicio, char *version){
+	// Busco la version
+	Version nodoVer = buscarVersion(nodoinicio, version);
+
+	if (nodoVer == NULL){
+		cout << "Version no encontrada" << endl;
+		return ERROR;
+	}else{
+		// Obtengo las lineas acumuladas 
+		Linea lineasAcumuladas = obtenerLineasAcumuladas(nodoVer);
+
+		// Encuentro el nuemero de la ultima raiz
+		int ultimaRaiz = 0;
+		Version actualNodo = nodoinicio;
+		while(actualNodo != NULL){
+			if(actualNodo->version->id > ultimaRaiz){
+				ultimaRaiz = actualNodo->version->id;
+			}
+			actualNodo = actualNodo->sig_hermano;
+		}
+	
+		// Creo nueva raiz
+		Version nuevaRaiz = new nodoDeLaVersion;
+		nuevaRaiz->version = new struct version;
+		nuevaRaiz->version->id = ultimaRaiz + 1;
+		nuevaRaiz->version->linea = NULL;
+		nuevaRaiz->primer_hijo = NULL;
+		nuevaRaiz->sig_hermano = NULL;
+		nuevaRaiz->padre = NULL;
+		
+		nuevaRaiz->version->linea = copiarLineas(lineasAcumuladas);
+		
+		if(nodoinicio == NULL){
+			nodoinicio = nuevaRaiz;
+		}else{
+			Version ultimo = nodoinicio;
+			while(ultimo->sig_hermano != NULL){
+				ultimo = ultimo->sig_hermano;
+			}
+			ultimo->sig_hermano = nuevaRaiz;
+		}
+	return OK;
+	}
+}
+
+
+
+Linea obtenerLineasAcumuladas(Version nodo){
+	if (nodo == NULL){
+		return NULL;
+	}else{
+		Linea lineasPadre = NULL;
+		if (nodo->padre != NULL){
+			lineasPadre = obtenerLineasAcumuladas(nodo->padre);
+		}
+		return aplicarCambios(lineasPadre, nodo->version->linea);
+	}
+}
+
+
+// Combina las líneas del padre con las de la versión actual
+Linea aplicarCambios(Linea lineasBase, Linea cambios){
+    // Si no hay base, simplemente copiamos los cambios
+    if(lineasBase == NULL){
+        return copiarLineas(cambios);
+    }
+    
+    // Si no hay cambios, devolvemos copia de la base
+    if(cambios == NULL){
+        return copiarLineas(lineasBase);
+    }
+    
+    // Por simplicidad, asumimos que los cambios REEMPLAZAN completamente
+    // (según tu estructura actual de versiones)
+    return copiarLineas(cambios);
+}
+
+Linea copiarLineas(Linea original){
+
 }

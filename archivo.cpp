@@ -122,6 +122,11 @@ TipoRet Iguales(Archivo a, char *version1, char *version2, bool &iguales){
     }
 }
 TipoRet VersionIndependiente(Archivo &a, char * version){
-    return NO_IMPLEMENTADA;
+    if (strcmp(version, "") == 0){
+        cout << "Parametros invalidos" << endl;
+        return ERROR;
+    }else{
+        return buscarVersionIndependiente(a->nodo, version);
+    }
 }
 
