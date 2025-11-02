@@ -379,7 +379,7 @@ TipoRet versionesIguales(Version nodoinicio, char *version1, char *version2, boo
 	Version v2 = buscarVersion(nodoinicio, version2);
 
 	// Chequeo si tienen el mismo número de líneas
-	if (!cantidadLineas(v1->version->linea, v2->version->linea)){
+	if (!mismaCantidadLineas(v1->version->linea, v2->version->linea)){
 		iguales = false;
 		cout << "Las versiones son diferentes" << endl; //*******no imprime esto */
 		return ERROR;
@@ -437,7 +437,6 @@ TipoRet buscarVersionIndependiente(Version nodoinicio, char *version){
 }
 
 
-
 Linea obtenerLineasAcumuladas(Version nodo){
 	if (nodo == NULL){
 		return NULL;
@@ -448,26 +447,4 @@ Linea obtenerLineasAcumuladas(Version nodo){
 		}
 		return aplicarCambios(lineasPadre, nodo->version->linea);
 	}
-}
-
-
-// Combina las líneas del padre con las de la versión actual
-Linea aplicarCambios(Linea lineasBase, Linea cambios){
-    // Si no hay base, simplemente copiamos los cambios
-    if(lineasBase == NULL){
-        return copiarLineas(cambios);
-    }
-    
-    // Si no hay cambios, devolvemos copia de la base
-    if(cambios == NULL){
-        return copiarLineas(lineasBase);
-    }
-    
-    // Por simplicidad, asumimos que los cambios REEMPLAZAN completamente
-    // (según tu estructura actual de versiones)
-    return copiarLineas(cambios);
-}
-
-Linea copiarLineas(Linea original){
-
 }

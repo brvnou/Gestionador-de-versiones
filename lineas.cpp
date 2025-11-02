@@ -218,7 +218,7 @@ int contarLineas(Linea l){
 }
 
 // Verifica si dos versiones tienen el mismo número de líneas
-bool versionesTienenMismoNumeroDeLineas(Linea lineas1, Linea lineas2){
+bool mismaCantidadLineas(Linea lineas1, Linea lineas2){
     int total1 = contarLineas(lineas1);
     int total2 = contarLineas(lineas2);
     return (total1 == total2);
@@ -240,3 +240,36 @@ bool compararLineas(Linea l1, Linea l2){
 }
 
 
+
+// Combina las lineas del padre con las de la version actual
+Linea aplicarCambios(Linea lineasBase, Linea cambios){
+    // Si no hay base copiamos los cambios
+    if(lineasBase == NULL){
+        return copiarLineas(cambios);
+    }
+    
+    // Si no hay cambios devolvemos la base
+    if(cambios == NULL){
+        return copiarLineas(lineasBase);
+    }
+    
+    // Por simplicidad, asumimos que los cambios REEMPLAZAN completamente
+    // (según tu estructura actual de versiones)
+    return copiarLineas(cambios);
+}
+
+
+
+Linea copiarLineas(Linea original){
+	if(original == NULL){
+		return NULL;
+	}else{
+		Linea nuevaLinea = new nodo_linea;
+		nuevaLinea->texto = new char[strlen(original->texto) + 1];
+        strcpy(nuevaLinea->texto, original->texto);
+
+        nuevaLinea->sig_linea = copiarLineas(original->sig_linea);
+
+        return nuevaLinea;
+    }
+}

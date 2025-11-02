@@ -52,7 +52,7 @@ TipoRet versionesBorrarLinea(Version raiz, char *versionId, unsigned int nroLine
 TipoRet buscarVersionMostrarTexto(Version nodo, char* version, char* nombreArchivo);
 
 //--puente de MostrarCambios
-TipoRet cantidadLineas(Version nodo, char* version, char* nombreArchivo);
+TipoRet buscarVersionMostrarCambios(Version nodo, char* version, char* nombreArchivo);
 
 //--puente de InsertarLinea
 TipoRet versionesInsertarLinea(Version raiz, char *versionId, char *linea, unsigned int nroLinea, char *error);
@@ -66,6 +66,5 @@ TipoRet buscarVersionIndependiente(Version nodoinicio, char *version);
 Linea obtenerLineasAcumuladas(Version nodo);
 
 
-Linea copiarLineas(Linea original);
 
 #endif

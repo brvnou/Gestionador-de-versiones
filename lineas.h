@@ -24,8 +24,15 @@ TipoRet lineasMostrarCambios(Linea lineas, Linea lineasPadre);
 Linea crearLineaVacia(Linea lineas);
 
 int contarLineas(Linea l);
-bool cantidadLineas(Linea lineas1, Linea lineas2);
+
+
+bool mismaCantidadLineas(Linea lineas1, Linea lineas2);
 
 bool compararLineas(Linea l1, Linea l2);
 
+
+Linea copiarLineas(Linea original);
+
+
+Linea aplicarCambios(Linea lineasBase, Linea cambios);
 #endif
