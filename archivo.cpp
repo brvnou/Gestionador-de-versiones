@@ -7,7 +7,7 @@ using namespace std;
 
 struct nodo_archivo {
     char * nombre;
-    Version nodo; // Flecha para poder navegar adentro del arbol
+    Version nodo;
 };
 
 
@@ -42,7 +42,7 @@ TipoRet BorrarArchivo(Archivo &a){
 // Verifica que los valores ingresados no sean vacios y se los retorna a "CrearVersionNueva"
 TipoRet CrearVersion(Archivo &a, char * version, char * error){
     if(strcmp(version, "") == 0){
-        strcpy(error, "Parametros invalidos"); //escribe el mensaje en el buffer
+        strcpy(error, "Parametros invalidos");
         return ERROR;
     }else{
         return CrearVersionNueva(a->nodo, version, error);
@@ -77,10 +77,9 @@ TipoRet MostrarVersiones(Archivo a){
 // Verifica los parametros y se los retorna a "versionesInsertarLinea" 
 TipoRet InsertarLinea(Archivo &a, char * version, char * linea, unsigned int nroLinea, char * error){
     if (strcmp(version, "") == 0 || strcmp(linea, "") == 0){
-        strcpy(error, "Parametros invalidos"); //escribe el mensaje en el buffer
+        strcpy(error, "Parametros invalidos");
         return ERROR;
     }else{
-        // Delegar a versiones.cpp
         return versionesInsertarLinea(a->nodo, version, linea, nroLinea, error);
     }
 }
@@ -88,10 +87,9 @@ TipoRet InsertarLinea(Archivo &a, char * version, char * linea, unsigned int nro
 // Verifica los parametros y se los retorna a "versionesBorrarLinea" 
 TipoRet BorrarLinea(Archivo &a, char * version, unsigned int nroLinea, char * error){
     if(strcmp(version, "") == 0){
-        strcpy(error, "Parametros invalidos"); //escribe el mensaje en el buffer
+        strcpy(error, "Parametros invalidos");
         return ERROR;
     }else{
-        // Delegar a versiones.cpp
         return versionesBorrarLinea(a->nodo, version, nroLinea, error);
     }
     

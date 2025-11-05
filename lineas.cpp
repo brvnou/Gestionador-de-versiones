@@ -13,10 +13,6 @@ struct nodo_linea{
 
 // Inserta una linea en una version
 TipoRet lineasInsertarLinea(Linea& lineas, char * texto, unsigned int nroLinea, char *error){
-    cout << "DEBUG lineasInsertarLinea: Inicio" << endl;
-    cout << "DEBUG: nroLinea = " << nroLinea << endl;
-    cout << "DEBUG: texto = " << texto << endl;
-    
     // Cuento el total de lineas
     int totalLineas = 0;
     nodo_linea * actual = lineas;
@@ -25,11 +21,8 @@ TipoRet lineasInsertarLinea(Linea& lineas, char * texto, unsigned int nroLinea, 
         actual = actual->sig_linea;
     }
 
-    cout << "DEBUG: totalLineas = " << totalLineas << endl;
-    
     // Valido nro ingresado
     if (nroLinea <= (unsigned int)(totalLineas + 1)){
-        cout << "DEBUG: Validación OK, creando línea..." << endl;
         // Creo nueva linea
         Linea nuevaLinea = new nodo_linea;
         nuevaLinea->texto = new char[strlen(texto) + 1];
@@ -38,12 +31,10 @@ TipoRet lineasInsertarLinea(Linea& lineas, char * texto, unsigned int nroLinea, 
         
     // Inserto en la posicion especificada
         if(nroLinea == 1){
-            cout << "DEBUG: Insertando al inicio" << endl;
             // Inserto al inicio
             nuevaLinea->sig_linea = lineas;
             lineas = nuevaLinea;
         }else{
-            cout << "DEBUG: Insertando en posición " << nroLinea << endl;
             // Inserto entre lineas o al final 
             Linea anterior = lineas;
             for (unsigned int i = 1; i < nroLinea - 1; i++){
@@ -52,10 +43,6 @@ TipoRet lineasInsertarLinea(Linea& lineas, char * texto, unsigned int nroLinea, 
             nuevaLinea->sig_linea = anterior->sig_linea;
             anterior->sig_linea = nuevaLinea;
         }
-
-        cout << "DEBUG: Línea insertada exitosamente" << endl;
-    
-    
     }else{
     cout << "Numero de linea invalido" << endl;
     return ERROR;
@@ -63,9 +50,8 @@ TipoRet lineasInsertarLinea(Linea& lineas, char * texto, unsigned int nroLinea, 
     return OK;
 }
 
-// Borra una linea en una version4 
+// Borra una linea en una version
 TipoRet lineasBorrarLinea(Linea& lineas, unsigned int nroLinea, char *error){
-    
     // Cuento el total de lineas
     int totalLineas = 0;
     Linea actual = lineas;
@@ -253,7 +239,7 @@ Linea aplicarCambios(Linea lineasBase, Linea cambios){
     return copiarLineas(cambios);
 }
 
-
+// Borra todas las lineas de una version
 void borrarLineas(Linea linea){
 	if (linea == NULL){
 		return;
@@ -278,4 +264,3 @@ Linea copiarLineas(Linea original){
         return nuevaLinea;
     }
 }
-

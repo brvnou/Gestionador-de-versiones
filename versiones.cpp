@@ -10,7 +10,7 @@ struct nodoDeLaVersion{
     v version;	
 	Version primer_hijo;
 	Version sig_hermano;
-	Version padre; //separo a los hijos por por su padre
+	Version padre;
 };
 
 struct version{
@@ -65,18 +65,20 @@ char* obtenerPadre(char* version) {
 	
 	// Encuentra el ultimopunto en el string
     char* ultimo_punto = strrchr(version, '.');
-    // ultimo_punto apunta a: ".1"
+    // ultimo_punto apunta a ".1"
     
-    if (ultimo_punto == NULL) { //si no tiene puntos es raiz
+    if (ultimo_punto == NULL) { 
+		//si no tiene puntos es raiz
 		return NULL;
     }else{
 		// calculo cuantos caracteres hay hasta el último punto
 		int longitud = ultimo_punto - version;
+		// restas de direcciones de mem.
 		// longitud = 4 (porque "2.15" tiene 4 caracteres)
 		
-		// Crea nuevo string con solo la parte del padre
+		// string con la parte del padre
 		char* padre = new char[longitud + 1];
-		strncpy(padre, version, longitud);  // Copia "2.15"
+		strncpy(padre, version, longitud);  // Copio longitud en padre
 		padre[longitud] = '\0';             // Termina el string
 		
 		return padre;  // Retorna "2.15"
@@ -107,16 +109,10 @@ int obtenerUltimoNumero(char* version){
 
 // Funcion booleana que responde si la version insertada tiene un formato valido
 bool esFormatoValido(char* version){
-	if (version == NULL || strlen(version) == 0){ //este caso no se usa 
-		cout << "caso1" << endl;
-		return false;
-		//Que no sea NULL o vacio
-	}else if(version[0] == '.'){
-		cout << "caso2" << endl;
+	if(version[0] == '.'){
 		return false;
 		//Que no empieze con punto 
 	}else if (version[strlen(version) - 1] == '.'){
-		cout << "caso3" << endl;
 		return false;
 		//Que no termine con punto
 	}
@@ -130,7 +126,7 @@ bool esFormatoValido(char* version){
 		}
 	}
 
-	for(int i = 0; version[i] != '\0' && version[i+1] != '\0'; i++) {	//**version[i] != '\0'** verifica si llegué al final del string
+	for(int i = 0; version[i] != '\0' && version[i+1] != '\0'; i++) { //version[i] != '\0'** verifica si llegué al final del string
 		if (version[i] == '.' && version[i+1] == '.'){
 			return false;
 		}else{
@@ -142,6 +138,7 @@ bool esFormatoValido(char* version){
 	return false;
 }
 
+// Borra un nodo y sus subversiones y ademas sus lineas
 void borrarNodoYSubversiones (Version nodo){
 	if (nodo == NULL){
 		return;
@@ -154,7 +151,7 @@ void borrarNodoYSubversiones (Version nodo){
 			hijo = siguiente;
 		}
 
-		// B
+		// Borra todas las lineas
 		borrarLineas(nodo->version->linea);
 		delete nodo->version;
 		delete nodo;
@@ -163,13 +160,10 @@ void borrarNodoYSubversiones (Version nodo){
 
 // Funcion booleana que responde a si la version toma la posta de sus parientes
 bool esVersionConsecutivaValida(Version padre, int numeroNuevo){
-	cout << "DEBUG validando " << numeroNuevo << " para padre " << padre->version->id << endl;
 	if (padre->primer_hijo == NULL){
 		if (numeroNuevo == 1){
-			cout << "DEBUG cuando el primer hijo es 1" << endl;
 			return true;
 		}else{
-			cout << "DEBUG cuando no tiene primer hijo y quisiste poner >1" << endl;
 			return false;
 		}
 	}else{
@@ -177,11 +171,7 @@ bool esVersionConsecutivaValida(Version padre, int numeroNuevo){
 		int ultimoNumero = 0;
 		// Llevo la cuenta de cuantas subversiones hay 
 		while (hijo != NULL){
-			cout << "DEBUG cuando tiene primer hijo y quisiste poner >1" << endl;
 			if (hijo->version->id > ultimoNumero) {
-				
-				cout << "DEBUG se inserta: " << numeroNuevo << "como siguiente hermano del primer hijo: " << padre->primer_hijo->version->id << endl;
-				cout << "del padre: " << padre->version->id << endl;
 				ultimoNumero = hijo->version->id;
 			}
 			hijo = hijo->sig_hermano;
@@ -261,10 +251,7 @@ TipoRet CrearVersionNueva(Version & nodo, char * version, char * error){
 				if (padre_id != NULL) {
 					
 					Version puntero_a_padre = buscarVersion(nodo, padre_id);
-					cout << "DEBUG: Insertando " << version << " como hijo de " << padre_id << endl;
-					cout << "DEBUG: Padre tiene primer_hijo? " << (puntero_a_padre->primer_hijo == NULL ? "NO" : "SI") << endl;
 					if(puntero_a_padre->primer_hijo != NULL){
-    				cout << "DEBUG: primer_hijo actual: " << obtenerfullVer(puntero_a_padre->primer_hijo) << endl;
 					}
 					
 					// Si padre_id vale algo, lo inserto como primer hijo
@@ -298,9 +285,12 @@ TipoRet CrearVersionNueva(Version & nodo, char * version, char * error){
 					
 				}else{
 					// No tiene padre - insertar como raíz
-					nuevaVer->sig_hermano = nodo; //hermano se conecta a la lista de "nodo" con sig_hermano
-					nuevaVer->sig_hermano = nodo; //hermano se conecta a la lista de "nodo" con sig_hermano
-					nodo = nuevaVer; //nuevaVer pasa a ser la cabeza de "nodo"
+					Version aux = nodo;
+					while(aux->sig_hermano != NULL){
+						aux = aux->sig_hermano;
+					}
+					aux->sig_hermano = nuevaVer;
+					delete[] aux;
 					delete[] padre_id;
 					return OK;
 				}
@@ -330,15 +320,15 @@ TipoRet buscarBorrarVersion (Version& raiz, char * version){
 				}else{
 				// Lo busco entre las raices
 					Version anterior = raiz;
-					while (anterior != NULL && anterior->sig_hermano != versionABorrar) {
+					while (anterior->sig_hermano != versionABorrar) {
 						anterior = anterior->sig_hermano;
 					}
 					// Salteo a versionABorrar	
 					anterior->sig_hermano = versionABorrar->sig_hermano;
 				}
 				// Decrementar IDs de los hermanos siguientes y sus respectivas subvers
-				Version inicio = raiz;
-				while(inicio != versionABorrar){
+				Version inicio = versionABorrar->sig_hermano;
+				while(inicio != NULL){
 					decrementarIDs(inicio);
 					inicio = inicio->sig_hermano;
 				}
@@ -490,7 +480,7 @@ TipoRet versionesIguales(Version nodoinicio, char *version1, char *version2, boo
 	// Chequeo si tienen el mismo número de líneas
 	if (!mismaCantidadLineas(v1->version->linea, v2->version->linea)){
 		iguales = false;
-		cout << "Las versiones son diferentes" << endl; //*******no imprime esto */
+		cout << "Las versiones son diferentes" << endl;
 		return ERROR;
 	}else{
 		// Comparo línea por línea
@@ -544,5 +534,3 @@ TipoRet crearVersionIndependiente(Version nodoinicio, char *version){
 	return OK;
 	}
 }
-
-
