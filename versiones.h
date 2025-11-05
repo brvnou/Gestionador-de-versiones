@@ -5,66 +5,49 @@
 using namespace std;
 
 
+typedef struct nodoDeLaVersion* Version;
+typedef struct version* v;
+typedef struct nodo_linea* Linea;
 
-typedef struct nodoDeLaVersion* Version;   //Puntero a un nodoDeLaversion
-typedef struct version* v;                 //Puntero a una version
-typedef struct nodo_linea* Linea;          //Puntero a un nodo_linea
 
+TipoRet CrearVersionNueva(Version& nodo, char * version, char * error);
 //**funcion delegada de CrearVersion
-TipoRet CrearVersionNueva(Version & nodo, char * version, char * error);
+// Crea una version nueva
 
-//**funcion delegada de MostrarVersiones
-void mostrarArbol(Version nodo, int nivel);
-
-// Busca la version adentro del arbol
-Version buscarVersion(Version nodo, char* version_buscada);
-
-// Obtiene la version completa de un int y retorna su arbol completo en String
-string obtenerfullVer(Version nodo);
-
-// Obtiene el padre de la version
-char* obtenerPadre(char* version);
-
-// Retorna el ultimo numero de la version (si es que tiene)
-int obtenerUltimoNumero(char* version);
-
-// Funcion booleana que responde si la version insertada tiene un formato valido
-bool esFormatoValido(char* version);
-
-// Funcion booleana que responde a si la version toma la posta de sus parientes
-bool esVersionConsecutivaValida(Version padre, int numeroNuevo);
-
-// Funcion booleana que responde a si la version es vacía o no
-bool nodoEsVacio(Version nodo);
-
-Linea obtenerVersionObjetivo(Version versionObjetivo);
-
-
+TipoRet buscarBorrarVersion(Version& nodo, char * version);
 //**funcion delegada de BorrarVersion
-//**funcion delegada de Iguales
-//**funcion delegada de VersionIndependiente
+// Busca la version para poder borrarla
 
-//--puente de BorrarLinea
-TipoRet versionesBorrarLinea(Version raiz, char *versionId, unsigned int nroLinea, char *error);
+void recorrerArbol(Version nodo, int nivel);
+//**funcion delegada de MostrarVersiones
+// Recorre el arbol 
 
-
-//--puente de MostrarTexto
-TipoRet buscarVersionMostrarTexto(Version nodo, char* version, char* nombreArchivo);
-
-//--puente de MostrarCambios
-TipoRet buscarVersionMostrarCambios(Version nodo, char* version, char* nombreArchivo);
-
-//--puente de InsertarLinea
 TipoRet versionesInsertarLinea(Version raiz, char *versionId, char *linea, unsigned int nroLinea, char *error);
+//--puente de InsertarLinea
+// Busca la version para poder insertar la linea
 
+TipoRet versionesBorrarLinea(Version raiz, char *versionId, unsigned int nroLinea, char *error);
+//--puente de BorrarLinea
+// Busca la version para poder borrar la linea
 
-bool esVersionVacia(Version v);
+TipoRet buscarVersionMostrarTexto(Version nodo, char* version, char* nombreArchivo);
+//--puente de MostrarTexto
+// Busca la version para poder mostrar el texto
+
+TipoRet buscarVersionMostrarCambios(Version nodo, char* version, char* nombreArchivo);
+//--puente de MostrarCambios
+// Busca la version para poder mostrar el texto
+
 TipoRet versionesIguales(Version nodoinicio, char *version1, char *version2, bool &iguales);
+//**funcion delegada de Iguales
+// Compara dos versiones completas
+
+TipoRet crearVersionIndependiente(Version nodoinicio, char *version);
+//**funcion delegada de VersionIndependiente
+// Crea una version independiente
+
+ 
+bool nodoEsVacio(Version nodo);
+// Funcion booleana que responde a si la version es vacía o no
     
-TipoRet buscarVersionIndependiente(Version nodoinicio, char *version);
-
-Linea obtenerLineasAcumuladas(Version nodo);
-
-
-
 #endif

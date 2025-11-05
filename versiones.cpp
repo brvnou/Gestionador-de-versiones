@@ -19,125 +19,14 @@ struct version{
 };
 
 
-
-
-//**funcion delegada de CrearVersion (archivo.cpp)
-TipoRet CrearVersionNueva(Version & nodo, char * version, char * error){
-	if(nodo == NULL && strcmp(version, "1") == 0){
-		// Si no existe el primer nodo y se quiere insertar version "1"
-		// Creo el árbol vacío
-		nodo = new nodoDeLaVersion;
-		nodo->version = new struct version;
-		nodo->version->id = 1;
-		nodo->primer_hijo = NULL;
-		nodo->sig_hermano = NULL;
-		crearLineaVacia(nodo->version->linea);
-		return OK;
+// Funcion booleana que responde a si la version es vacía o no
+bool nodoEsVacio(Version nodo){
+	if(!nodo){
+		return true;
 	}else{
-		if (!esFormatoValido(version)) {
-			cout << error << "Formato invalido" << endl;
-			return ERROR;
-		}else{
-			if (buscarVersion(nodo, version) != NULL) {
-				cout << error << "La version ya existe" << endl;
-				return ERROR;
-			}else{
-				// Crear el nodo primero
-				Version nuevaVer = new nodoDeLaVersion;
-				nuevaVer->version = new struct version;
-				nuevaVer->version->id = obtenerUltimoNumero(version);
-				nuevaVer->primer_hijo = NULL;
-				nuevaVer->sig_hermano = NULL;
-				nuevaVer->padre = NULL;
-				
-				// Verificar si tiene padre
-				char* padre_id = obtenerPadre(version);
-				
-				if (padre_id != NULL) {
-					// Si padre_id vale algo, lo inserto como primer hijo
-					Version puntero_a_padre = buscarVersion(nodo, padre_id);
-					
-					if (puntero_a_padre != NULL){
-						if (!esVersionConsecutivaValida(puntero_a_padre, nuevaVer->version->id)){
-							// falta version anterior
-							cout << "Falta version " << padre_id << "." << (nuevaVer->version->id - 1) << endl;
-							delete[] padre_id;
-							delete nuevaVer->version;
-							delete nuevaVer;
-							return ERROR;
-						}else{
-							//la inserto como primer hijo
-							nuevaVer->padre = puntero_a_padre;
-							//nuevaVer->sig_hermano = puntero_a_padre->primer_hijo;
-							puntero_a_padre ->primer_hijo = nuevaVer;			
-							delete[] padre_id;
-							return OK;
-						}
-					}else{
-						
-						// Caso que no encuentre el padre, tipeo incorrecto
-						cout << "Padre de: " << version << " no existe" << endl;
-						delete[] padre_id;
-						delete nuevaVer->version;
-						delete nuevaVer;
-						return ERROR;
-					}
-					
-					
-				}else{
-					// No tiene padre - insertar como raíz
-					nuevaVer->sig_hermano = nodo; //hermano se conecta a la lista de "nodo" con sig_hermano
-					nodo = nuevaVer; //nuevaVer pasa a ser la cabeza de "nodo"
-					delete[] padre_id;
-					return OK;
-				}
-			}
-		}
-		return OK;
+		return false;
 	}
 }
-
-
-//**Funcion delegada de MostrarVersiones
-void mostrarArbol(Version nodo, int nivel){
-	if (nodo == NULL) return;
-	
-	// Imprimir indentación según el nivel
-	for (int i = 1; i < nivel; i++) {
-		cout << "-> ";  // Un tabulador por nivel
-	}
-	
-	// Mostrar la versión
-	cout << obtenerfullVer(nodo) << endl;
-	
-	// Primero mostrar todos los hijos (aumenta nivel)
-	mostrarArbol(nodo->primer_hijo, nivel + 1);
-	
-	// Luego mostrar hermanos (mismo nivel)
-	mostrarArbol(nodo->sig_hermano, nivel);
-}
-
-
-// Busca la version adentro del arbol
-Version buscarVersion(Version nodo, char* version_buscada) {
-	//char* version_buscada = char* version, los dos son el segundo parametro
-	if (nodo == NULL){
-		return NULL; //arbol vacio
-	}else if (strcmp(obtenerfullVer(nodo).c_str(), version_buscada) == 0){ //"c_str" char to string
-		//verifico si 'nodo' es el que buscamos
-		return nodo; //nodo encontrado
-	}else{
-		// Busca PRIMERO en los HIJOS de este nodo (profundidad)
-		Version encontrado = buscarVersion(nodo->primer_hijo, version_buscada);
-		if (encontrado != NULL) {
-			return encontrado;  // Encontrado en los hijos
-		}else{
-			// Si no está en hijos, busca en los HERMANOS (mismo nivel)
-			return buscarVersion(nodo->sig_hermano, version_buscada);
-		}
-	}	
-}
-
 
 // Obtiene la version completa de un int y retorna su arbol completo en String
 string obtenerfullVer(Version nodo){
@@ -152,6 +41,24 @@ string obtenerfullVer(Version nodo){
 	// entonces retorno solamente el id
 }
 
+// Busca la version adentro del arbol
+Version buscarVersion(Version nodo, char* version_buscada) {
+	if (nodo == NULL){
+		return NULL; //arbol vacio
+	}else if (strcmp(obtenerfullVer(nodo).c_str(), version_buscada) == 0){ //"c_str" char to string
+		//verifico si 'nodo' es el que buscamos
+		return nodo; //nodo encontrado
+	}else{
+		// Busca primero en los hijos del nodo
+		Version encontrado = buscarVersion(nodo->primer_hijo, version_buscada);
+		if (encontrado != NULL) {
+			return encontrado;  // Encontrado en los hijos
+		}else{
+			// Si no, busco en hermanos
+			return buscarVersion(nodo->sig_hermano, version_buscada);
+		}
+	}	
+}
 
 // Obtiene el padre de la version
 char* obtenerPadre(char* version) {
@@ -183,7 +90,7 @@ int obtenerUltimoNumero(char* version){
 		return 0;
 		return ERROR;
 	}else{
-		char* ultimoPunto = strchr(version, '.');
+		char* ultimoPunto = strrchr(version, '.');
 			//strchr busca un caracter
 			//obtengo lo que esta detras del utlimo punto
 		if (ultimoPunto != NULL){
@@ -197,7 +104,6 @@ int obtenerUltimoNumero(char* version){
 		}
 	}
 }
-
 
 // Funcion booleana que responde si la version insertada tiene un formato valido
 bool esFormatoValido(char* version){
@@ -236,6 +142,24 @@ bool esFormatoValido(char* version){
 	return false;
 }
 
+void borrarNodoYSubversiones (Version nodo){
+	if (nodo == NULL){
+		return;
+	}else{
+		// Borro todos los hijos
+		Version hijo = nodo->primer_hijo;
+		while (hijo != NULL){
+			Version siguiente = hijo->sig_hermano;
+			borrarNodoYSubversiones(hijo);
+			hijo = siguiente;
+		}
+
+		// B
+		borrarLineas(nodo->version->linea);
+		delete nodo->version;
+		delete nodo;
+	}
+}
 
 // Funcion booleana que responde a si la version toma la posta de sus parientes
 bool esVersionConsecutivaValida(Version padre, int numeroNuevo){
@@ -259,8 +183,6 @@ bool esVersionConsecutivaValida(Version padre, int numeroNuevo){
 				cout << "DEBUG se inserta: " << numeroNuevo << "como siguiente hermano del primer hijo: " << padre->primer_hijo->version->id << endl;
 				cout << "del padre: " << padre->version->id << endl;
 				ultimoNumero = hijo->version->id;
-			}else{
-				return false;
 			}
 			hijo = hijo->sig_hermano;
 		}
@@ -272,18 +194,213 @@ bool esVersionConsecutivaValida(Version padre, int numeroNuevo){
 	}
 }
 
-
-// Funcion booleana que responde a si la version es vacía o no
-bool nodoEsVacio(Version nodo){
-	if(!nodo){
-		return true;
+// Obtiene las lineas acumuladas 
+Linea obtenerLineasAcumuladas(Version nodo){
+	if (nodo == NULL){
+		return NULL;
 	}else{
-		return false;
+		Linea lineasPadre = NULL;
+		if (nodo->padre != NULL){
+			lineasPadre = obtenerLineasAcumuladas(nodo->padre);
+		}
+		return aplicarCambios(lineasPadre, nodo->version->linea);
 	}
 }
 
+// Decrementa un valor menos el id del nodo y de sus hijos
+void decrementarIDs (Version nodo){
+	if(nodo == NULL){
+		return;
+	}else{
+		// Decremento este nodo
+		nodo->version->id--;
+
+		// Decremento todos los hijos
+		Version hijo = nodo->primer_hijo;
+		while(hijo != NULL){
+			decrementarIDs(hijo);
+			hijo = hijo->sig_hermano;
+		}
+		
+	}
+}
+
+//**funcion delegada de CrearVersion
+// Crea una version nueva
+TipoRet CrearVersionNueva(Version & nodo, char * version, char * error){
+	if(nodo == NULL && strcmp(version, "1") == 0){
+		// Si no existe el primer nodo y se quiere insertar version "1"
+		// Creo el árbol vacío
+		nodo = new nodoDeLaVersion;
+		nodo->version = new struct version;
+		nodo->version->id = 1;
+		nodo->primer_hijo = NULL;
+		nodo->sig_hermano = NULL;
+		crearLineaVacia(nodo->version->linea);
+		return OK;
+	}else{
+		if (!esFormatoValido(version)) {
+			cout << error << "Formato invalido" << endl;
+			return ERROR;
+		}else{
+			if (buscarVersion(nodo, version) != NULL) {
+				cout << error << "La version ya existe" << endl;
+				return ERROR;
+			}else{
+				// Crear el nodo primero
+				Version nuevaVer = new nodoDeLaVersion;
+				nuevaVer->version = new struct version;
+				nuevaVer->version->id = obtenerUltimoNumero(version);
+				nuevaVer->primer_hijo = NULL;
+				nuevaVer->sig_hermano = NULL;
+				nuevaVer->padre = NULL;
+				
+				// Verificar si tiene padre
+				char* padre_id = obtenerPadre(version);
+				
+				if (padre_id != NULL) {
+					
+					Version puntero_a_padre = buscarVersion(nodo, padre_id);
+					cout << "DEBUG: Insertando " << version << " como hijo de " << padre_id << endl;
+					cout << "DEBUG: Padre tiene primer_hijo? " << (puntero_a_padre->primer_hijo == NULL ? "NO" : "SI") << endl;
+					if(puntero_a_padre->primer_hijo != NULL){
+    				cout << "DEBUG: primer_hijo actual: " << obtenerfullVer(puntero_a_padre->primer_hijo) << endl;
+					}
+					
+					// Si padre_id vale algo, lo inserto como primer hijo
+					if (puntero_a_padre != NULL){
+						if (!esVersionConsecutivaValida(puntero_a_padre, nuevaVer->version->id)){
+							// falta version anterior
+							cout << "Falta version " << padre_id << "." << (nuevaVer->version->id - 1) << endl;
+							delete[] padre_id;
+							delete nuevaVer->version;
+							delete nuevaVer;
+							return ERROR;
+						}else{
+							//la inserto como primer hijo
+							nuevaVer->padre = puntero_a_padre;
+							nuevaVer->sig_hermano = puntero_a_padre->primer_hijo;
+							puntero_a_padre ->primer_hijo = nuevaVer;			
+							
+							delete[] padre_id;
+							return OK;
+						}
+					}else{
+						
+						// Caso que no encuentre el padre, tipeo incorrecto
+						cout << "Padre de: " << version << " no existe" << endl;
+						delete[] padre_id;
+						delete nuevaVer->version;
+						delete nuevaVer;
+						return ERROR;
+					}
+					
+					
+				}else{
+					// No tiene padre - insertar como raíz
+					nuevaVer->sig_hermano = nodo; //hermano se conecta a la lista de "nodo" con sig_hermano
+					nuevaVer->sig_hermano = nodo; //hermano se conecta a la lista de "nodo" con sig_hermano
+					nodo = nuevaVer; //nuevaVer pasa a ser la cabeza de "nodo"
+					delete[] padre_id;
+					return OK;
+				}
+			}
+		}
+		return OK;
+	}
+}
+
+// Busca la version para poder borrarla
+TipoRet buscarBorrarVersion (Version& raiz, char * version){
+	if(raiz == NULL){
+		cout << "No hay versiones disponibles" << endl;
+		return ERROR;
+	}else{
+		Version versionABorrar = buscarVersion(raiz, version);
+		
+		if(versionABorrar == NULL){
+			cout << "Version no encontrada" << endl;
+			return ERROR;
+		}else{
+			// Caso donde es raiz
+			if(versionABorrar->padre == NULL){
+				// Desconecto de la lista si es el primer nodo
+				if(raiz == versionABorrar){
+					raiz = versionABorrar->sig_hermano;
+				}else{
+				// Lo busco entre las raices
+					Version anterior = raiz;
+					while (anterior != NULL && anterior->sig_hermano != versionABorrar) {
+						anterior = anterior->sig_hermano;
+					}
+					// Salteo a versionABorrar	
+					anterior->sig_hermano = versionABorrar->sig_hermano;
+				}
+				// Decrementar IDs de los hermanos siguientes y sus respectivas subvers
+				Version inicio = raiz;
+				while(inicio != versionABorrar){
+					decrementarIDs(inicio);
+					inicio = inicio->sig_hermano;
+				}
+				// Le desconecto su flecha "sig_hermano"
+				versionABorrar->sig_hermano = NULL;
+				
+				// Borro el nodo y sus subversiones
+				borrarNodoYSubversiones(versionABorrar);
+			}else{
+				// Caso donde tiene padre, es una subversion
+				Version padre = versionABorrar->padre;
+				
+				// Desconecto de la lista de hijos de su padre
+				if(padre->primer_hijo == versionABorrar){
+					// Cuando es el primer hijo
+					padre->primer_hijo = versionABorrar->sig_hermano;
+				}else{
+					// Cuando está entre los hijos
+					Version anterior = padre->primer_hijo;
+					while(anterior->sig_hermano != versionABorrar){
+						anterior = anterior->sig_hermano;
+					}
+					anterior->sig_hermano = versionABorrar->sig_hermano;
+				}
+
+				// Decremento IDs de los hermanos siguientes y sus respectivas subvers
+				Version hermano = versionABorrar->sig_hermano;
+				while(hermano != NULL){
+					decrementarIDs(hermano);
+					hermano = hermano->sig_hermano;
+				}
+				// Desconecto de hermanos
+				versionABorrar->sig_hermano = NULL;
+				borrarNodoYSubversiones(versionABorrar);
+			}
+		}
+	}
+	return OK;
+}
+
+//**Funcion delegada de MostrarVersiones
+// Recorre el arbol 
+void recorrerArbol(Version nodo, int nivel){
+	if (nodo == NULL) return;
+	
+	// Imprimir indentación según el nivel
+	for (int i = 1; i < nivel; i++) {
+		cout << "-> ";  // Un tabulador por nivel
+	}
+	
+	// Mostrar la versión
+	cout << obtenerfullVer(nodo) << endl;
+	
+	// Primero mostrar todos los hijos (aumenta nivel)
+	recorrerArbol(nodo->primer_hijo, nivel + 1);
+	
+	// Luego mostrar hermanos (mismo nivel)
+	recorrerArbol(nodo->sig_hermano, nivel);
+}
 
 //--Puente de InsertarLinea, busca la version de la linea a insertar
+// Busca la version para poder insertar la linea
 TipoRet versionesInsertarLinea(Version raiz, char* versionID, char *linea, unsigned int nroLinea, char *error){
 	// Busco la version
 	Version nodoVer = buscarVersion(raiz, versionID);
@@ -303,7 +420,7 @@ TipoRet versionesInsertarLinea(Version raiz, char* versionID, char *linea, unsig
 	
 }
 
-
+// Busca la version para poder borrar la linea
 TipoRet versionesBorrarLinea(Version raiz, char *versionID, unsigned int nroLinea, char *error){
 	// Busco la version
 	Version nodoVer = buscarVersion(raiz, versionID);
@@ -322,12 +439,11 @@ TipoRet versionesBorrarLinea(Version raiz, char *versionID, unsigned int nroLine
 	}
 }
 
-
-
-TipoRet buscarVersionMostrarTexto (Version nodo, char* version, char* nombreArchivo){
+// Busca la version para poder mostrar el texto
+TipoRet buscarVersionMostrarTexto(Version nodo, char* version, char* nombreArchivo){
 	// Busco la version
 	Version nodoVer = buscarVersion(nodo, version);
-
+	
 	if(nodoVer == NULL){
 		cout << "Version no encontrada" << endl;
 		return ERROR;
@@ -338,11 +454,11 @@ TipoRet buscarVersionMostrarTexto (Version nodo, char* version, char* nombreArch
 	}
 }
 
-
+// Busca la version para poder mostrar el texto
 TipoRet buscarVersionMostrarCambios(Version nodo, char* version, char* nombreArchivo){
 	// Busco la version
 	Version nodoVer = buscarVersion(nodo, version);
-
+	
 	if(nodoVer == NULL){
 		cout << "Version no encontrada" << endl;
 		return ERROR;
@@ -355,7 +471,7 @@ TipoRet buscarVersionMostrarCambios(Version nodo, char* version, char* nombreArc
 			cout << nombreArchivo << " - " << version << endl;
 			lineasMostrarCambios(nodoVer->version->linea, versionPadre->version->linea);
 			return OK;
-		
+			
 		}else{
 			// Si no tiene padre, es raiz
 			cout << nombreArchivo << " - " << version << endl;
@@ -364,13 +480,6 @@ TipoRet buscarVersionMostrarCambios(Version nodo, char* version, char* nombreArc
 		}
 	}
 }
-
-
-// Comprueba si la versión es NULL o su lista de líneas está vacía
-bool esVersionVacia(Version v){
-	return (v == NULL || v->version == NULL || v->version->linea == NULL);
-}
-
 
 // Función que compara dos versiones completas
 TipoRet versionesIguales(Version nodoinicio, char *version1, char *version2, bool &iguales){
@@ -390,8 +499,8 @@ TipoRet versionesIguales(Version nodoinicio, char *version1, char *version2, boo
 	}
 }
 
-
-TipoRet buscarVersionIndependiente(Version nodoinicio, char *version){
+// Crea una version independiente
+TipoRet crearVersionIndependiente(Version nodoinicio, char *version){
 	// Busco la version
 	Version nodoVer = buscarVersion(nodoinicio, version);
 
@@ -437,14 +546,3 @@ TipoRet buscarVersionIndependiente(Version nodoinicio, char *version){
 }
 
 
-Linea obtenerLineasAcumuladas(Version nodo){
-	if (nodo == NULL){
-		return NULL;
-	}else{
-		Linea lineasPadre = NULL;
-		if (nodo->padre != NULL){
-			lineasPadre = obtenerLineasAcumuladas(nodo->padre);
-		}
-		return aplicarCambios(lineasPadre, nodo->version->linea);
-	}
-}

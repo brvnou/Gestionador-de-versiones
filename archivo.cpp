@@ -4,11 +4,14 @@
 #include "versiones.h"
 using namespace std;
 
+
 struct nodo_archivo {
     char * nombre;
     Version nodo; // Flecha para poder navegar adentro del arbol
 };
 
+
+// Crea el archivo sin contenido
 Archivo CrearArchivo(char * nombre){
 	Archivo a = new nodo_archivo;
 	a->nombre = new(char[MAX_NOMBRE]);
@@ -29,37 +32,49 @@ Archivo CrearArchivo(char * nombre){
     }
 }
 
-
+// Borra el archivo del programa
 TipoRet BorrarArchivo(Archivo &a){
     delete a;
 	cout << "ARCHIVO BORRADO" << endl;
 	return OK;
 }
 
-
+// Verifica que los valores ingresados no sean vacios y se los retorna a "CrearVersionNueva"
 TipoRet CrearVersion(Archivo &a, char * version, char * error){
-    return CrearVersionNueva(a->nodo, version, error);
-}
-
-
-TipoRet MostrarVersiones(Archivo a){
-    if (a == NULL) {
-        cout << "Archivo no existe" << endl;
+    if(strcmp(version, "") == 0){
+        strcpy(error, "Parametros invalidos"); //escribe el mensaje en el buffer
         return ERROR;
     }else{
-        cout << "ARCHIVO: " << a->nombre << endl;
-		
-		// Mostrar árbol de versiones recursivamente
-		if (nodoEsVacio(a->nodo)) {
-            cout << "No hay versiones disponibles" << endl;
-		} else {
-            mostrarArbol(a->nodo, 1);
-		}
-	}
+        return CrearVersionNueva(a->nodo, version, error);
+        return OK;
+    }
+}
+
+// Verifica los parametros y se los retorna a "buscarBorrarVersion" 
+TipoRet BorrarVersion(Archivo &a, char * version){
+    if (strcmp(version, "") == 0){
+        cout << "Parametros invalidos" << endl;
+        return ERROR;
+    }else{
+        return buscarBorrarVersion(a->nodo, version);   
+        return OK;
+    }
+}
+
+// Verifica que existan versiones para mostrar y delega a "recorrerArbol"
+TipoRet MostrarVersiones(Archivo a){
+    cout << "ARCHIVO: " << a->nombre << endl;
+    
+    // Mostrar árbol de versiones recursivamente
+    if (nodoEsVacio(a->nodo)) {
+        cout << "No hay versiones disponibles" << endl;
+    } else {
+        recorrerArbol(a->nodo, 1);
+    }
     return OK;
 }
 
-
+// Verifica los parametros y se los retorna a "versionesInsertarLinea" 
 TipoRet InsertarLinea(Archivo &a, char * version, char * linea, unsigned int nroLinea, char * error){
     if (strcmp(version, "") == 0 || strcmp(linea, "") == 0){
         strcpy(error, "Parametros invalidos"); //escribe el mensaje en el buffer
@@ -70,6 +85,7 @@ TipoRet InsertarLinea(Archivo &a, char * version, char * linea, unsigned int nro
     }
 }
 
+// Verifica los parametros y se los retorna a "versionesBorrarLinea" 
 TipoRet BorrarLinea(Archivo &a, char * version, unsigned int nroLinea, char * error){
     if(strcmp(version, "") == 0){
         strcpy(error, "Parametros invalidos"); //escribe el mensaje en el buffer
@@ -78,11 +94,10 @@ TipoRet BorrarLinea(Archivo &a, char * version, unsigned int nroLinea, char * er
         // Delegar a versiones.cpp
         return versionesBorrarLinea(a->nodo, version, nroLinea, error);
     }
-
+    
 }
 
-
-// Esta función muestra el texto completo de la version, teniendo en cuenta los cambios realizados en dicha versión y en las versiones ancestras, de la cual ella depende.
+// Verifica los parametros y se los retorna a "buscarVersionMostrarTexto" 
 TipoRet MostrarTexto(Archivo a, char* version){
     if (strcmp(version, "") == 0){
         cout << "Parametros invalidos" << endl;
@@ -92,9 +107,7 @@ TipoRet MostrarTexto(Archivo a, char* version){
     }
 }
 
-
-
-
+// Verifica los parametros y se los retorna a "buscarVersionMostrarCambios" 
 TipoRet MostrarCambios(Archivo a, char * version){
     if (strcmp(version, "") == 0){
         cout << "Parametros invalidos" << endl;
@@ -104,13 +117,7 @@ TipoRet MostrarCambios(Archivo a, char * version){
     }
 }
 
-
-
-TipoRet BorrarVersion(Archivo &a, char * version){
-    return NO_IMPLEMENTADA;
-}
-
-
+// Verifica los parametros y se los retorna a "versionesIguales" 
 TipoRet Iguales(Archivo a, char *version1, char *version2, bool &iguales){
     // Solo chequeamos que las cadenas de versiones no sean NULL
     if (strcmp(version1, "") == 0 || strcmp(version2, "") == 0){
@@ -122,13 +129,12 @@ TipoRet Iguales(Archivo a, char *version1, char *version2, bool &iguales){
     }
 }
 
-
+// Verifica los parametros y se los retorna a "crearVersionIndependiente" 
 TipoRet VersionIndependiente(Archivo &a, char * version){
     if (strcmp(version, "") == 0){
         cout << "Parametros invalidos" << endl;
         return ERROR;
     }else{
-        return buscarVersionIndependiente(a->nodo, version);
+        return crearVersionIndependiente(a->nodo, version);
     }
 }
-

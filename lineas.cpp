@@ -4,12 +4,14 @@
 #include "versiones.h"
 using namespace std;
 
+
 struct nodo_linea{
     char * texto;
     Linea sig_linea;
 };
 
 
+// Inserta una linea en una version
 TipoRet lineasInsertarLinea(Linea& lineas, char * texto, unsigned int nroLinea, char *error){
     cout << "DEBUG lineasInsertarLinea: Inicio" << endl;
     cout << "DEBUG: nroLinea = " << nroLinea << endl;
@@ -61,7 +63,7 @@ TipoRet lineasInsertarLinea(Linea& lineas, char * texto, unsigned int nroLinea, 
     return OK;
 }
 
-
+// Borra una linea en una version4 
 TipoRet lineasBorrarLinea(Linea& lineas, unsigned int nroLinea, char *error){
     
     // Cuento el total de lineas
@@ -110,7 +112,7 @@ TipoRet lineasBorrarLinea(Linea& lineas, unsigned int nroLinea, char *error){
     return OK;
 }
 
-
+// Muestra el contenido de las lineas de una version en especifica
 TipoRet lineasMostrarTexto(Linea lineas){
     if (lineas == NULL){
         cout << "No contiene lineas" << endl;
@@ -126,7 +128,7 @@ TipoRet lineasMostrarTexto(Linea lineas){
     return OK;
 }
 
-
+// Muestra los cambios realizados en una version
 TipoRet lineasMostrarCambios(Linea lineas, Linea lineasPadre){
     if(lineas == NULL && lineasPadre == NULL){
     // Ambas vacias, no hay cambios
@@ -199,13 +201,11 @@ TipoRet lineasMostrarCambios(Linea lineas, Linea lineasPadre){
     }
 }
 
-
+// Crea una linea vacia
 Linea crearLineaVacia(Linea lineas){
     lineas = NULL;
     return lineas;
 }
-
-
 
 // Cuenta líneas de una versión
 int contarLineas(Linea l){
@@ -239,8 +239,6 @@ bool compararLineas(Linea l1, Linea l2){
     return (l1 == NULL && l2 == NULL);
 }
 
-
-
 // Combina las lineas del padre con las de la version actual
 Linea aplicarCambios(Linea lineasBase, Linea cambios){
     // Si no hay base copiamos los cambios
@@ -252,14 +250,21 @@ Linea aplicarCambios(Linea lineasBase, Linea cambios){
     if(cambios == NULL){
         return copiarLineas(lineasBase);
     }
-    
-    // Por simplicidad, asumimos que los cambios REEMPLAZAN completamente
-    // (según tu estructura actual de versiones)
     return copiarLineas(cambios);
 }
 
 
+void borrarLineas(Linea linea){
+	if (linea == NULL){
+		return;
+	}else{
+		borrarLineas(linea->sig_linea);
+        delete[] linea->texto;
+        delete linea;
+	}
+}
 
+// Compara dos listas de líneas
 Linea copiarLineas(Linea original){
 	if(original == NULL){
 		return NULL;
@@ -273,3 +278,4 @@ Linea copiarLineas(Linea original){
         return nuevaLinea;
     }
 }
+
